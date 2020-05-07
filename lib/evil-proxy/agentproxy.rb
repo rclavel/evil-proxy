@@ -7,6 +7,10 @@ class EvilProxy::AgentProxyServer < EvilProxy::HTTPProxyServer
 
   def initialize_callbacks config
     @mitm_server = config[:MITMProxyServer]
+    @proxy_host = config[:MITMProxyHost]
+    @proxy_port = config[:MITMProxyPort]
+    @proxy_user = config[:MITMProxyUser]
+    @proxy_pass = config[:MITMProxyPass]
   end
 
   def fire key, *args
@@ -21,7 +25,7 @@ class EvilProxy::AgentProxyServer < EvilProxy::HTTPProxyServer
     upstream = setup_upstream_proxy_authentication(req, res, header)
 
     body_tmp = []
-    http = Net::HTTP.new(uri.host, uri.port, upstream.host, upstream.port)
+    http = Net::HTTP.new(uri.host, uri.port, @proxy_host, @proxy_port, @proxy_user, @proxy_pass)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     req_fib = Fiber.new do

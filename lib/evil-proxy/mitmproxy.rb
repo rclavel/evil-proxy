@@ -9,6 +9,11 @@ class EvilProxy::MITMProxyServer < EvilProxy::HTTPProxyServer
     @mitm_pattern = config[:MITMPattern]
     @mitm_servers = {}
     @mitm_port = 4433
+
+    @proxy_host = config[:MITMProxyHost]
+    @proxy_port = config[:MITMProxyPort]
+    @proxy_user = config[:MITMProxyUser]
+    @proxy_pass = config[:MITMProxyPass]
   end
 
   def ca
@@ -93,6 +98,10 @@ class EvilProxy::MITMProxyServer < EvilProxy::HTTPProxyServer
         SSLVerifyClient: OpenSSL::SSL::VERIFY_NONE,
         SSLCertificate: cert,
         SSLPrivateKey: key,
+        MITMProxyHost: @proxy_host,
+        MITMProxyPort: @proxy_port,
+        MITMProxyUser: @proxy_user,
+        MITMProxyPass: @proxy_pass,
       )
       mitm_server = retry_start_agent_server agent_config
 
